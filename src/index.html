@@ -82,20 +82,20 @@
         taskDetails
           .append("span")
           .attr("class", "task-description")
-          .text((d) => d["Task Description"]);
+          .text((d) => d["Priority"]);
 
         taskBoxes
           .append("span")
           .attr("class", "priority")
           .style("background", (d) => {
             switch (d.Priority) {
-              case "Urgent and important":
+              case "Urgent and important (do first)":
                 return "red";
-              case "Important, but not urgent":
+              case "Important, not urgent (schedule)":
                 return "orange";
               case "Urgent, but not important":
                 return "yellow";
-              case "Neither urgent nor important":
+              case "Not urgent, not important":
                 return "grey";
               default:
                 return "grey";
@@ -126,13 +126,6 @@
                   .on("click", switchInterface);
         }
 
-        // const title = interface2.select("h2.title");
-        // if (title.empty()) {
-        //   interface2
-        //           .append("h2")
-        //           .attr("class", "title")
-        //           .text("Task Detail View");
-        // }
         const title = interface2.select("h2.title");
         if (title.empty()) {
           interface2
@@ -207,17 +200,6 @@
             renderAllTasksCompleted();
           }
         }
-      }
-
-      // Add a function to check if a string is a valid URL
-      function isValidURL(str) {
-        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-        return !!pattern.test(str);
       }
 
       function renderAllTasksCompleted() {
