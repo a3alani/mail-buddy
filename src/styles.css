@@ -47,9 +47,36 @@ body {
 
 .title {
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 24px;
+    margin-bottom: 26px;
+    font-size: 30px;
     font-weight: bold;
+}
+
+.description {
+    margin-top: 0px; /* adjust as needed */
+    margin-bottom: 10px; /* adjust as needed */
+    text-align: left;
+}
+
+#priority-select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    background: #f1f1f1;
+    box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.1);
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+.show {
+    display: flex !important;
+}
+
+.hide {
+    display: none !important;
 }
 
 .task-box {
@@ -118,7 +145,16 @@ body {
     background: #f1f1f1;
     box-sizing: border-box;
 }
+.task-title {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+}
 
+.task-value {
+    margin: 5px 0 10px;
+    color: #777;
+}
 .mark-complete {
     padding: 10px;
     border: none;

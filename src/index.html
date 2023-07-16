@@ -67,66 +67,15 @@
       const interface2 = d3.select("#interface-2");
       let data = [];
 
+      let selectedPriority = "All";
+
       let currentIndex = 0;
+      let filteredData = [];
 
-      function retrieveDataFromCloudFunction() {
-        return fetch(
-          "https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData"
-        )
-          .then((response) => response.json())
-          .catch((error) => {
-            console.error("Error retrieving data:", error);
-            // Handle the error appropriately
-          });
-      }
+      function filterByPriority(tasks) {
+        if (selectedPriority === "All") return tasks;
 
-      function parseData(response) {
-        const parsedData = [];
-
-        for (const key in response) {
-          const value = response[key];
-
-          if (value.data) {
-            const data = JSON.parse(value.data);
-
-            if (data.Table) {
-              const table = data.Table;
-
-              if (Array.isArray(table)) {
-                for (const task of table) {
-                  parsedData.push({
-                    "Task Title": task["Task Title"],
-                    "Task Description": task["Task Description"],
-                    "Due Date": task["Due Date"] || "",
-                    "Email Type": data["Email Type"] || "", // Include Email Type property
-                    "Email URL": data["Email URL"] || "", // Include Email URL property
-                    Priority: task["Priority"],
-                    Suggestions: task["Suggestions"],
-                    completed: false,
-                  });
-                }
-              } else if (
-                table.rows &&
-                Array.isArray(table.rows) &&
-                table.rows.length > 0
-              ) {
-                const task = table.rows[0];
-                parsedData.push({
-                  "Task Title": task[0],
-                  "Task Description": task[1],
-                  "Due Date": task[3] || "",
-                  "Email Type": data["Email Type"] || "", // Include Email Type property
-                  "Email URL": data["Email URL"] || "", // Include Email URL property
-                  Priority: task[4],
-                  Suggestions: task[5]["Suggestions"],
-                  completed: false,
-                });
-              }
-            }
-          }
-        }
-
-        return parsedData;
+        return tasks.filter((task) => task.Priority === selectedPriority);
       }
 
       interface0
@@ -140,18 +89,35 @@
 
       function renderTasks() {
         interface1.selectAll("*").remove();
+        filteredData = filterByPriority(data);
 
         interface1.append("h2").attr("class", "title").text("All Tasks");
+        interface1.append("p").attr("class", "description").text("Generated from your email.");
+
+        interface1
+                .append("select")
+                .attr("id", "priority-select")
+                .on("change", function () {
+                  selectedPriority = this.value;
+                  renderTasks();
+                })
+                .selectAll("option")
+                .data(["All", "Urgent and important", "Important, but not urgent", "Urgent, but not important", "Neither urgent nor important"])
+                .enter()
+                .append("option")
+                .attr("value", (d) => d)
+                .text((d) => d);
+
         const taskBoxes = interface1
           .selectAll("div.task-box")
-          .data(data)
+          .data(filteredData)
           .enter()
           .append("div")
           .attr("class", (d) =>
             d.completed ? "task-box strikethrough" : "task-box"
           )
           .on("click", (d, i) => {
-            currentIndex = i;
+            currentIndex = d["Task ID"];
             renderTaskDetail();
             switchInterface();
           });
@@ -196,6 +162,7 @@
           .on("click", () => {
             retrieveDataFromCloudFunction().then((res) => {
               data = parseData(res);
+              console.log(data)
               renderTasks();
             });
           });
@@ -206,19 +173,33 @@
         const backButton = interface2.select("button.back-button");
         if (backButton.empty()) {
           interface2
-            .append("button")
-            .attr("class", "back-button")
-            .text("⬅️")
-            .on("click", switchInterface);
+                  .append("button")
+                  .attr("class", "back-button")
+                  .text("⬅️")
+                  .on("click", switchInterface);
         }
 
+        // const title = interface2.select("h2.title");
+        // if (title.empty()) {
+        //   interface2
+        //           .append("h2")
+        //           .attr("class", "title")
+        //           .text("Task Detail View");
+        // }
         const title = interface2.select("h2.title");
         if (title.empty()) {
           interface2
-            .append("h2")
-            .attr("class", "title")
-            .text("Task Detail View");
+                  .append("h2")
+                  .attr("class", "title")
+                  .text(task["Task Title"]);
         }
+        // const description = interface2.select("p.description");
+        // if (description.empty()) {
+        //   interface2
+        //           .append("p")
+        //           .attr("class", "description")
+        //           .text(task["Task Description"]);
+        // }
 
         const card = interface2.select("div.task-card");
         if (!card.empty()) {
@@ -226,27 +207,51 @@
         }
 
         if (!task.completed) {
+
           const newCard = interface2.append("div").attr("class", "task-card");
 
-          newCard.append("h2").text(task["Task Title"]);
+          newCard.append("p")
+                  .attr("class", "task-value")
+                  .html("<span style='font-style: italic; '>" + task["Task Description"] + "</span>");
 
-          newCard.append("p").text(task["Task Description"]);
+          newCard.append("p").attr("class", "task-title").text("Due Date");
+          newCard.append("p").attr("class", "task-value").text(task["Due Date"]);
+
+          newCard.append("p").attr("class", "task-title").text("Priority");
+          newCard.append("p").attr("class", "task-value").text(task["Priority"]);
+
+          newCard.append("p").attr("class", "task-title").text("Suggestion");
+          newCard.append("p").attr("class", "task-value").text(task["Suggestions"]);
+
+          newCard.append("p").attr("class", "task-title").text("Email URL");
+
+          if (task["Email URL"]) {
+            newCard.append("a")
+                    .attr("class", "task-value")
+                    .attr("href", task["Email URL"])
+                    .attr("target", "_blank")
+                    .html("<span style='font-style: italic; color: blue; text-decoration: underline;'>" + task["Email URL"] + "</span>");
+          } else {
+            newCard.append("p")
+                    .attr("class", "task-value")
+                    .html("<span style='font-style: italic; color: blue; text-decoration: underline;'>N/A</span>");
+          }
 
           newCard
-            .append("button")
-            .attr("class", "mark-complete")
-            .text("Mark Complete")
-            .on("click", () => {
-              task.completed = true;
-              interface1.selectAll("*").remove();
-              renderTasks();
-              currentIndex = data.findIndex((task) => !task.completed);
-              if (currentIndex === -1) {
-                renderAllTasksCompleted();
-              } else {
-                renderTaskDetail();
-              }
-            });
+                  .append("button")
+                  .attr("class", "mark-complete")
+                  .text("Mark Complete")
+                  .on("click", () => {
+                    task.completed = true;
+                    interface1.selectAll("*").remove();
+                    renderTasks();
+                    currentIndex = data.findIndex((task) => !task.completed);
+                    if (currentIndex === -1) {
+                      renderAllTasksCompleted();
+                    } else {
+                      renderTaskDetail();
+                    }
+                  });
         } else {
           currentIndex = data.findIndex((task) => !task.completed);
           if (currentIndex !== -1) {
@@ -255,6 +260,17 @@
             renderAllTasksCompleted();
           }
         }
+      }
+
+      // Add a function to check if a string is a valid URL
+      function isValidURL(str) {
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return !!pattern.test(str);
       }
 
       function renderAllTasksCompleted() {
@@ -271,6 +287,70 @@
         const temp = interface1.style("left");
         interface1.style("left", interface2.style("left"));
         interface2.style("left", temp);
+      }
+
+      function retrieveDataFromCloudFunction() {
+        return fetch(
+                "https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData"
+        )
+                .then((response) => response.json())
+                .catch((error) => {
+                  console.error("Error retrieving data:", error);
+                  // Handle the error appropriately
+                });
+      }
+
+      function parseData(response) {
+        const parsedData = [];
+        let currID = 0;
+
+        for (const key in response) {
+          const value = response[key];
+
+          if (value.data) {
+            const data = JSON.parse(value.data);
+
+            if (data.Table) {
+              const table = data.Table;
+
+              if (Array.isArray(table)) {
+                for (const task of table) {
+                  parsedData.push({
+                    "Task ID": currID,
+                    "Task Title": task["Task Title"],
+                    "Task Description": task["Task Description"],
+                    "Due Date": task["Due Date"] || "",
+                    "Email Type": data["Email Type"] || "", // Include Email Type property
+                    "Email URL": data["Email URL"] || "", // Include Email URL property
+                    Priority: task["Priority"],
+                    Suggestions: task["Suggestions"],
+                    completed: false,
+                  });
+                  currID++;
+                }
+              } else if (
+                      table.rows &&
+                      Array.isArray(table.rows) &&
+                      table.rows.length > 0
+              ) {
+                const task = table.rows[0];
+                parsedData.push({
+                  "Task ID": currID,
+                  "Task Title": task[0],
+                  "Task Description": task[1],
+                  "Due Date": task[3] || "",
+                  "Email Type": data["Email Type"] || "", // Include Email Type property
+                  "Email URL": data["Email URL"] || "", // Include Email URL property
+                  Priority: task[4],
+                  Suggestions: task[5]["Suggestions"],
+                  completed: false,
+                });
+                currID++;
+              }
+            }
+          }
+        }
+        return parsedData;
       }
 
       renderTasks();
