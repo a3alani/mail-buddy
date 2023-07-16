@@ -2,7 +2,7 @@
 
 This was built during the SDxAI Hackathon
 
-WebApp link: https://a3alani.github.io/mail-buddy/src/
+Mail Buddy link: https://a3alani.github.io/mail-buddy/src/
 
 DevPost link: https://devpost.com/software/getsh-tdonebuddy
 
