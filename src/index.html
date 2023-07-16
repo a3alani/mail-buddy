@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="app.js"></script>
     <div id="app">
+      <div id="interface-0" class="interface"></div>
       <div id="interface-1" class="interface"></div>
       <div id="interface-2" class="interface"></div>
     </div>
@@ -16,9 +20,49 @@
     <script src="firebase-firestore.js"></script>
     <script src="firebase-storage.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="app.js"></script>
+    <script src="credentials.js"></script>
 
     <script>
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDaR7uYRRPkI_FRz2DkjbTB9RwU58RxAwc",
+        authDomain: "mail-buddy-c568f.firebaseapp.com",
+        projectId: "mail-buddy-c568f",
+        storageBucket: "mail-buddy-c568f.appspot.com",
+        messagingSenderId: "693887835709",
+        appId: "1:693887835709:web:5ed89b2ad30528e21c5454",
+        measurementId: "G-TTYDX7S236",
+      };
+      firebase.initializeApp(firebaseConfig);
+
+      function signInWithGoogle() {
+        // Create a Google provider object
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        // Hide the login button
+        const loginBtn = document.getElementById("login-btn");
+        if (loginBtn) {
+          loginBtn.style.display = "none";
+        }
+
+        // Sign in with Google using a pop-up window
+        firebase
+          .auth()
+          .signInWithPopup(provider)
+          .then((result) => {
+            // User signed in successfully
+            const user = result.user;
+            console.log("Signed in user:", user);
+            // You can redirect to another page or perform additional actions here
+          })
+          .catch((error) => {
+            // An error occurred during sign in
+            console.error("Error signing in:", error);
+            // Handle the error appropriately
+          });
+      }
+
+      const interface0 = d3.select("#interface-0");
       const interface1 = d3.select("#interface-1");
       const interface2 = d3.select("#interface-2");
       let data = [];
@@ -84,6 +128,15 @@
 
         return parsedData;
       }
+
+      interface0
+        .append("button")
+        .attr("class", "bottom-button")
+        .text("Login with Google")
+        .on("click", () => {
+          signInWithGoogle();
+          interface0.style("left", "100%");
+        });
 
       function renderTasks() {
         interface1.selectAll("*").remove();
@@ -209,9 +262,9 @@
         const card = interface2.append("div").attr("class", "task-card");
         card.append("p").text("All tasks are completed!");
         card.append("svg").attr("viewBox", "0 0 52 52").html(`
-        <circle cx="26" cy="26" r="25" fill="none" stroke="#2ECC71" stroke-width="2"/>
-        <path d="M16 26 L23 33 L36 20" fill="none" stroke="#2ECC71" stroke-width="2"/>
-    `);
+            <circle cx="26" cy="26" r="25" fill="none" stroke="#2ECC71" stroke-width="2"/>
+            <path d="M16 26 L23 33 L36 20" fill="none" stroke="#2ECC71" stroke-width="2"/>
+        `);
       }
 
       function switchInterface() {
