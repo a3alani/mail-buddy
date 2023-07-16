@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 const firestore = admin.firestore();
-
+const database = admin.database();
 
 // Retrieve the response object from the AI model
 const aiResponse = {
@@ -25,4 +25,21 @@ exports.storeAIResponse = functions.https.onRequest(async (req, res) => {
     res.status(500).send("Error creating document");
   }
 });
+
+exports.retrieveAllData = functions.https.onRequest(async (req, res) => {
+  try {
+    const snapshot = await database.ref().once("value");
+    const data = snapshot.val();
+
+    res.set("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+    res.set("Access-Control-Allow-Methods", "GET"); // Allow GET requests
+    res.set("Access-Control-Allow-Headers", "Content-Type"); // Allow requests with Content-Type header
+
+    res.status(200).json(data);                 // Send data
+  } catch (error) {
+    console.error("Error retrieving data:", error);
+    res.status(500).send("Error retrieving data");
+  }
+});
+
 
