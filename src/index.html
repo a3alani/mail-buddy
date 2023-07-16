@@ -1,164 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Manager</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<div id="app">
-  <div id="interface-1" class="interface"></div>
-  <div id="interface-2" class="interface"></div>
-</div>
-<script src="firebase-app.js"></script>
-<script src="firebase-auth.js"></script>
-<script src="firebase-firestore.js"></script>
-<script src="firebase-storage.js"></script>
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="app.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="interface-1" class="interface"></div>
+      <div id="interface-2" class="interface"></div>
+    </div>
+    <script src="firebase-app.js"></script>
+    <script src="firebase-auth.js"></script>
+    <script src="firebase-firestore.js"></script>
+    <script src="firebase-storage.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="app.js"></script>
 
-<script>
-  const interface1 = d3.select('#interface-1');
-  const interface2 = d3.select('#interface-2');
-  const data = [
-    { id: 1, name: 'Task 1', description: 'Description 1', priority: 'high', completed: false },
-    { id: 2, name: 'Task 2', description: 'Description 2', priority: 'medium', completed: false },
-    { id: 3, name: 'Task 3', description: 'Description 3', priority: 'low', completed: false },
-  ];
+    <script>
+      const interface1 = d3.select("#interface-1");
+      const interface2 = d3.select("#interface-2");
+      const data = [
+        {
+          id: 1,
+          name: "Task 1",
+          description: "Description 1",
+          priority: "high",
+          completed: false,
+        },
+        {
+          id: 2,
+          name: "Task 2",
+          description: "Description 2",
+          priority: "medium",
+          completed: false,
+        },
+        {
+          id: 3,
+          name: "Task 3",
+          description: "Description 3",
+          priority: "low",
+          completed: false,
+        },
+      ];
 
-  let currentIndex = 0;
+      let currentIndex = 0;
 
-  function renderTasks() {
-    interface1.append('h2').attr('class', 'title').text('All Tasks');
-    const taskBoxes = interface1
-            .selectAll('div.task-box')
-            .data(data)
-            .enter()
-            .append('div')
-            .attr('class', d => d.completed ? 'task-box strikethrough' : 'task-box')
-            .on('click', (d, i) => {
-              currentIndex = i;
-              renderTaskDetail();
-              switchInterface();
-            });
+      function renderTasks() {
+        interface1.append("h2").attr("class", "title").text("All Tasks");
+        const taskBoxes = interface1
+          .selectAll("div.task-box")
+          .data(data)
+          .enter()
+          .append("div")
+          .attr("class", (d) =>
+            d.completed ? "task-box strikethrough" : "task-box"
+          )
+          .on("click", (d, i) => {
+            currentIndex = i;
+            renderTaskDetail();
+            switchInterface();
+          });
 
-    const taskDetails = taskBoxes
-            .append('div')
-            .attr('class', 'task-details');
+        const taskDetails = taskBoxes
+          .append("div")
+          .attr("class", "task-details");
 
-    taskDetails
-            .append('span')
-            .attr('class', 'task-name')
-            .text(d => d.name);
+        taskDetails
+          .append("span")
+          .attr("class", "task-name")
+          .text((d) => d.name);
 
-    taskDetails
-            .append('span')
-            .attr('class', 'task-description')
-            .text(d => d.description);
+        taskDetails
+          .append("span")
+          .attr("class", "task-description")
+          .text((d) => d.description);
 
-    taskBoxes
-            .append('span')
-            .attr('class', 'priority')
-            .style('background', d => {
-              switch (d.priority) {
-                case 'high': return 'red';
-                case 'medium': return 'orange';
-                case 'low': return 'yellow';
-                default: return 'black';
+        taskBoxes
+          .append("span")
+          .attr("class", "priority")
+          .style("background", (d) => {
+            switch (d.priority) {
+              case "high":
+                return "red";
+              case "medium":
+                return "orange";
+              case "low":
+                return "yellow";
+              default:
+                return "black";
+            }
+          });
+      }
+
+      function renderTaskDetail() {
+        const task = data[currentIndex];
+        const backButton = interface2.select("button.back-button");
+        if (backButton.empty()) {
+          interface2
+            .append("button")
+            .attr("class", "back-button")
+            .text("⬅️")
+            .on("click", switchInterface);
+        }
+
+        const title = interface2.select("h2.title");
+        if (title.empty()) {
+          interface2
+            .append("h2")
+            .attr("class", "title")
+            .text("Task Detail View");
+        }
+
+        const card = interface2.select("div.task-card");
+        if (!card.empty()) {
+          card.remove();
+        }
+
+        if (!task.completed) {
+          const newCard = interface2.append("div").attr("class", "task-card");
+
+          newCard.append("h2").text(task.name);
+
+          newCard.append("p").text(task.description);
+
+          newCard
+            .append("button")
+            .attr("class", "mark-complete")
+            .text("Mark Complete")
+            .on("click", () => {
+              task.completed = true;
+              interface1.selectAll("*").remove();
+              renderTasks();
+              currentIndex = data.findIndex((task) => !task.completed);
+              if (currentIndex === -1) {
+                renderAllTasksCompleted();
+              } else {
+                renderTaskDetail();
               }
             });
-  }
-
-  function renderTaskDetail() {
-    const task = data[currentIndex];
-    const backButton = interface2.select('button.back-button');
-    if (backButton.empty()) {
-      interface2.append('button').attr('class', 'back-button').text('⬅️').on('click', switchInterface);
-    }
-
-    const title = interface2.select('h2.title');
-    if (title.empty()) {
-      interface2.append('h2').attr('class', 'title').text('Task Detail View');
-    }
-
-    const card = interface2.select('div.task-card');
-    if (!card.empty()) {
-      card.remove();
-    }
-
-    if (!task.completed) {
-      const newCard = interface2
-              .append('div')
-              .attr('class', 'task-card');
-
-      newCard
-              .append('h2')
-              .text(task.name);
-
-      newCard
-              .append('p')
-              .text(task.description);
-
-      newCard
-              .append('button')
-              .attr('class', 'mark-complete')
-              .text('Mark Complete')
-              .on('click', () => {
-                task.completed = true;
-                interface1.selectAll('*').remove();
-                renderTasks();
-                currentIndex = data.findIndex(task => !task.completed);
-                if (currentIndex === -1) {
-                  renderAllTasksCompleted();
-                } else {
-                  renderTaskDetail();
-                }
-              });
-    } else {
-      currentIndex = data.findIndex(task => !task.completed);
-      if (currentIndex !== -1) {
-        renderTaskDetail();
-      } else {
-        renderAllTasksCompleted();
+        } else {
+          currentIndex = data.findIndex((task) => !task.completed);
+          if (currentIndex !== -1) {
+            renderTaskDetail();
+          } else {
+            renderAllTasksCompleted();
+          }
+        }
       }
-    }
-  }
 
-  function renderAllTasksCompleted() {
-    interface2.selectAll('div.task-card').remove();
-    const card = interface2.append('div').attr('class', 'task-card');
-    card.append('p').text('All tasks are completed!');
-    card.append('svg').attr('viewBox', '0 0 52 52').html(`
+      function renderAllTasksCompleted() {
+        interface2.selectAll("div.task-card").remove();
+        const card = interface2.append("div").attr("class", "task-card");
+        card.append("p").text("All tasks are completed!");
+        card.append("svg").attr("viewBox", "0 0 52 52").html(`
         <circle cx="26" cy="26" r="25" fill="none" stroke="#2ECC71" stroke-width="2"/>
         <path d="M16 26 L23 33 L36 20" fill="none" stroke="#2ECC71" stroke-width="2"/>
     `);
-  }
+      }
 
-  function switchInterface() {
-    const temp = interface1.style('left');
-    interface1.style('left', interface2.style('left'));
-    interface2.style('left', temp);
-  }
+      function switchInterface() {
+        const temp = interface1.style("left");
+        interface1.style("left", interface2.style("left"));
+        interface2.style("left", temp);
+      }
 
-  renderTasks();
+      function retrieveDataFromCloudFunction() {
+        return fetch(
+          "https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData"
+        )
+          .then((response) => response.json())
+          .catch((error) => {
+            console.error("Error retrieving data:", error);
+            // Handle the error appropriately
+          });
+      }
 
-  function retrieveDataFromCloudFunction() {
-  fetch("https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData")
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error("Error retrieving data:", error);
-      // Handle the error appropriately
-    });
-}
+      renderTasks();
 
+      retrieveDataFromCloudFunction().then((res) => {
+        parseData(res);
+      });
 
-</script>
-</body>
+      function parseData(response) {
+        const parsedData = [];
 
+        for (const key in response) {
+          const value = response[key];
+
+          if (value.data) {
+            const data = JSON.parse(value.data);
+
+            if (data.Table) {
+              const table = data.Table;
+
+              if (Array.isArray(table)) {
+                for (const task of table) {
+                  parsedData.push({
+                    "Task Title": task["Task Title"],
+                    "Task Description": task["Task Description"],
+                    "Due Date": task["Due Date"],
+                    Priority: task["Priority"],
+                    Suggestions: task["Suggestions"],
+                  });
+                }
+              } else if (
+                table.rows &&
+                Array.isArray(table.rows) &&
+                table.rows.length > 0
+              ) {
+                const task = table.rows[0];
+                parsedData.push({
+                  "Task Title": task[0],
+                  "Task Description": task[1],
+                  "Due Date": task[3],
+                  Priority: task[4],
+                  Suggestions: task[5],
+                });
+              }
+            }
+          }
+        }
+
+        console.log(parsedData);
+        return parsedData;
+      }
+
+    </script>
+  </body>
 </html>
-
-
