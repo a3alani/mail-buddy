@@ -78,18 +78,18 @@
         return tasks.filter((task) => task.Priority === selectedPriority);
       }
 
-      interface1.style("left", "100%");
-      interface0.append()
-      interface0.append("h2").attr("class", "title").text("Login Using Your Google Account");
-      interface0
-        .append("button")
-        .attr("class", "bottom-button")
-        .text("Login with Google")
-        .on("click", () => {
-          signInWithGoogle();
-          interface0.style("left", "100%");
-          interface1.style("left", "0%");
-        });
+      // interface1.style("left", "100%");
+      // interface0.append()
+      // interface0.append("h2").attr("class", "title").text("Login Using Your Google Account");
+      // interface0
+      //   .append("button")
+      //   .attr("class", "bottom-button")
+      //   .text("Login with Google")
+      //   .on("click", () => {
+      //     signInWithGoogle();
+      //     interface0.style("left", "100%");
+      //     interface1.style("left", "0%");
+      //   });
 
       function renderTasks() {
         interface1.selectAll("*").remove();
@@ -190,13 +190,6 @@
                   .attr("class", "title")
                   .text(task["Task Title"]);
         }
-        // const description = interface2.select("p.description");
-        // if (description.empty()) {
-        //   interface2
-        //           .append("p")
-        //           .attr("class", "description")
-        //           .text(task["Task Description"]);
-        // }
 
         const card = interface2.select("div.task-card");
         if (!card.empty()) {
