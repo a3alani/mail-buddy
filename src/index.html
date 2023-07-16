@@ -188,7 +188,10 @@
           interface2
                   .append("h2")
                   .attr("class", "title")
+                  .attr("id", "interface2-title")
                   .text(task["Task Title"]);
+        } else {
+          title.text(task["Task Title"]);
         }
 
         const card = interface2.select("div.task-card");
