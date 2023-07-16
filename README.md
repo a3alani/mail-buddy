@@ -13,6 +13,7 @@
 
 <img width="1439" alt="Screenshot 2023-07-16 at 2 15 50 PM" src="https://github.com/a3alani/mail-buddy/assets/103146838/810185df-336e-423f-a0fb-3062ef3a727d">
 
+<img width="1438" alt="Screenshot 2023-07-16 at 2 21 11 PM" src="https://github.com/a3alani/mail-buddy/assets/103146838/aab42f53-9671-46c5-b65d-df82767bb3a8">
 
 
 
