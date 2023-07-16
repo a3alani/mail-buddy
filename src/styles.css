@@ -4,27 +4,32 @@ body {
     align-items: center;
     height: 100vh;
     background: #F5F5F5;
+    font-family: 'Helvetica Neue', sans-serif;
+    color: #333;
 }
 
 #app {
     position: relative;
     width: 375px;
     height: 667px;
-    border-radius: 15px;
-    box-shadow: 0px 0px 25px 0px rgba(0,0,0,0.1);
+    border-radius: 25px;
+    box-shadow: 0px 4px 25px 0px rgba(0,0,0,0.2);
     overflow: hidden;
+    background: white;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .interface {
     align-items: center;
     position: absolute;
     width: 100%;
-    max-height: 90%; /* Prevents content from exceeding the height of the interface. Adjust percentage as needed. */
-    overflow: auto; /* Enable scrolling when content exceeds the interface height. */
+    max-height: 90%;
+    overflow: auto;
     display: flex;
     flex-direction: column;
-    margin-top: 40px;
-    padding-bottom: 40px; /* Add some padding at the bottom to prevent overlap with the button. */
+    padding: 20px;
+    box-sizing: border-box;
     transition: all 0.3s;
 }
 
@@ -38,7 +43,9 @@ body {
 
 .title {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .task-box {
@@ -46,13 +53,14 @@ body {
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 70%;
-    /*margin-left: 15%;*/
+    padding: 15px;
+    margin-bottom: 15px;
+    width: 100%;
     box-sizing: border-box;
     border-radius: 5px;
     transition: all 0.2s;
+    background: #f1f1f1;
+    box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.1);
 }
 
 .task-details {
@@ -61,24 +69,34 @@ body {
 }
 
 .task-details .task-name {
-    font-size: 20px;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .task-details .task-description {
-    font-size: 12px;
+    font-size: 14px;
+    color: #777;
 }
 
 .task-box:hover {
-    transform: scale(1.25);
-    opacity: 1.25;
-    z-index: 1;
+    transform: scale(1.03);
+    box-shadow: 0px 4px 15px 0px rgba(0,0,0,0.1);
 }
 
 .priority {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 25px;
+    min-height: 25px;
     width: 25px;
     height: 25px;
     border-radius: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: #2ECC71;
+    color: white;
 }
 
 .strikethrough {
@@ -90,10 +108,11 @@ body {
     flex-direction: column;
     justify-content: space-between;
     padding: 20px;
-    /*height: 200px;*/
-    width: 70%;
+    width: 100%;
     border-radius: 5px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.1);
+    background: #f1f1f1;
+    box-sizing: border-box;
 }
 
 .mark-complete {
@@ -103,21 +122,24 @@ body {
     background: #2ECC71;
     color: white;
     cursor: pointer;
+    font-weight: bold;
 }
 
 .bottom-button {
-    position: sticky; /* Makes the button stick to the bottom. */
-    bottom: 0; /* Positions the button at the bottom. */
-    width: 35%;  /* Set a fixed width for the button */
+    position: sticky;
+    bottom: 0;
+    width: 100%;
     padding: 10px;
     border: none;
     border-radius: 5px;
     background: #2ECC71;
     color: white;
     cursor: pointer;
-    text-align: center;  /* Ensure the text is centered */
-    margin-top: 15px;
-    z-index: 2; /* Ensure the button stays above other content. */
+    text-align: center;
+    margin-top: 20px;
+    z-index: 2;
+    font-weight: bold;
+    box-sizing: border-box;
 }
 
 .back-button {
