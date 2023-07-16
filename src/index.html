@@ -78,6 +78,7 @@
         return tasks.filter((task) => task.Priority === selectedPriority);
       }
 
+      interface1.style("left", "100%");
       interface0
         .append("button")
         .attr("class", "bottom-button")
@@ -85,6 +86,7 @@
         .on("click", () => {
           signInWithGoogle();
           interface0.style("left", "100%");
+          interface1.style("left", "0%");
         });
 
       function renderTasks() {
