@@ -103,6 +103,21 @@ body {
     cursor: pointer;
 }
 
+.update-button {
+    /*position: absolute;*/
+    bottom: 10px;
+    width: 120px;  /* Set a fixed width for the button */
+    left: calc(50% - 60px);  /* Center the button */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #2ECC71;
+    color: white;
+    cursor: pointer;
+    text-align: center;  /* Ensure the text is centered */
+}
+
+
 .back-button {
     position: absolute;
     top: 10px;
