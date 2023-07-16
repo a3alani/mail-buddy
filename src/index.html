@@ -143,6 +143,18 @@
 
   renderTasks();
 
+  function retrieveDataFromCloudFunction() {
+  fetch("https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData")
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error("Error retrieving data:", error);
+      // Handle the error appropriately
+    });
+}
+
 
 </script>
 </body>
