@@ -21,33 +21,69 @@
     <script>
       const interface1 = d3.select("#interface-1");
       const interface2 = d3.select("#interface-2");
-      const data = [
-        {
-          id: 1,
-          name: "Task 1",
-          description: "Description 1",
-          priority: "high",
-          completed: false,
-        },
-        {
-          id: 2,
-          name: "Task 2",
-          description: "Description 2",
-          priority: "medium",
-          completed: false,
-        },
-        {
-          id: 3,
-          name: "Task 3",
-          description: "Description 3",
-          priority: "low",
-          completed: false,
-        },
-      ];
+      let data = [];
 
       let currentIndex = 0;
 
+      function retrieveDataFromCloudFunction() {
+        return fetch(
+                "https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData"
+        )
+                .then((response) => response.json())
+                .catch((error) => {
+                  console.error("Error retrieving data:", error);
+                  // Handle the error appropriately
+                });
+      }
+
+      function parseData(response) {
+        const parsedData = [];
+
+        for (const key in response) {
+          const value = response[key];
+
+          if (value.data) {
+            const data = JSON.parse(value.data);
+
+            if (data.Table) {
+              const table = data.Table;
+
+              if (Array.isArray(table)) {
+                for (const task of table) {
+                  parsedData.push({
+                    "Task Title": task["Task Title"],
+                    "Task Description": task["Task Description"],
+                    "Due Date": task["Due Date"],
+                    Priority: task["Priority"],
+                    Suggestions: task["Suggestions"],
+                  });
+                }
+              } else if (
+                      table.rows &&
+                      Array.isArray(table.rows) &&
+                      table.rows.length > 0
+              ) {
+                const task = table.rows[0];
+                parsedData.push({
+                  "Task Title": task[0],
+                  "Task Description": task[1],
+                  "Due Date": task[3],
+                  Priority: task[4],
+                  Suggestions: task[5],
+                  completed: false
+                });
+              }
+            }
+          }
+        }
+
+        // console.log(parsedData);
+        return parsedData;
+      }
+
       function renderTasks() {
+        interface1.selectAll("*").remove();
+
         interface1.append("h2").attr("class", "title").text("All Tasks");
         const taskBoxes = interface1
           .selectAll("div.task-box")
@@ -70,28 +106,41 @@
         taskDetails
           .append("span")
           .attr("class", "task-name")
-          .text((d) => d.name);
+          // .text((d, i) => "Task " + i + ": " + d["Task Title"]);
+          .text((d, i) => d["Task Title"]);
 
         taskDetails
           .append("span")
           .attr("class", "task-description")
-          .text((d) => d.description);
+          .text((d) => d["Task Description"]);
 
         taskBoxes
           .append("span")
           .attr("class", "priority")
           .style("background", (d) => {
-            switch (d.priority) {
-              case "high":
+            switch (d.Priority) {
+              case "Urgent and important":
                 return "red";
-              case "medium":
+              case "Important, but not urgent":
                 return "orange";
-              case "low":
+              case "Urgent, but not important":
                 return "yellow";
+              case "Neither urgent nor important":
+                return "grey";
               default:
-                return "black";
+                return "grey";
             }
           });
+
+        interface1.append('button')
+                .attr('class', 'bottom-button')
+                .text('Update')
+                .on('click', () => {
+                  retrieveDataFromCloudFunction().then((res) => {
+                    data = parseData(res);
+                    renderTasks();
+                  });
+                });
       }
 
       function renderTaskDetail() {
@@ -121,9 +170,9 @@
         if (!task.completed) {
           const newCard = interface2.append("div").attr("class", "task-card");
 
-          newCard.append("h2").text(task.name);
+          newCard.append("h2").text(task["Task Title"]);
 
-          newCard.append("p").text(task.description);
+          newCard.append("p").text(task["Task Description"]);
 
           newCard
             .append("button")
@@ -166,67 +215,7 @@
         interface2.style("left", temp);
       }
 
-      function retrieveDataFromCloudFunction() {
-        return fetch(
-          "https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData"
-        )
-          .then((response) => response.json())
-          .catch((error) => {
-            console.error("Error retrieving data:", error);
-            // Handle the error appropriately
-          });
-      }
-
       renderTasks();
-
-      retrieveDataFromCloudFunction().then((res) => {
-        parseData(res);
-      });
-
-      function parseData(response) {
-        const parsedData = [];
-
-        for (const key in response) {
-          const value = response[key];
-
-          if (value.data) {
-            const data = JSON.parse(value.data);
-
-            if (data.Table) {
-              const table = data.Table;
-
-              if (Array.isArray(table)) {
-                for (const task of table) {
-                  parsedData.push({
-                    "Task Title": task["Task Title"],
-                    "Task Description": task["Task Description"],
-                    "Due Date": task["Due Date"],
-                    Priority: task["Priority"],
-                    Suggestions: task["Suggestions"],
-                  });
-                }
-              } else if (
-                table.rows &&
-                Array.isArray(table.rows) &&
-                table.rows.length > 0
-              ) {
-                const task = table.rows[0];
-                parsedData.push({
-                  "Task Title": task[0],
-                  "Task Description": task[1],
-                  "Due Date": task[3],
-                  Priority: task[4],
-                  Suggestions: task[5],
-                });
-              }
-            }
-          }
-        }
-
-        console.log(parsedData);
-        console.log(parsedData[0]['Task Title']);
-        return parsedData;
-      }
 
     </script>
   </body>
