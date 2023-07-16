@@ -27,13 +27,13 @@
 
       function retrieveDataFromCloudFunction() {
         return fetch(
-                "https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData"
+          "https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData"
         )
-                .then((response) => response.json())
-                .catch((error) => {
-                  console.error("Error retrieving data:", error);
-                  // Handle the error appropriately
-                });
+          .then((response) => response.json())
+          .catch((error) => {
+            console.error("Error retrieving data:", error);
+            // Handle the error appropriately
+          });
       }
 
       function parseData(response) {
@@ -53,31 +53,35 @@
                   parsedData.push({
                     "Task Title": task["Task Title"],
                     "Task Description": task["Task Description"],
-                    "Due Date": task["Due Date"],
+                    "Due Date": task["Due Date"] || "",
+                    "Email Type": data["Email Type"] || "", // Include Email Type property
+                    "Email URL": data["Email URL"] || "", // Include Email URL property
                     Priority: task["Priority"],
                     Suggestions: task["Suggestions"],
+                    completed: false,
                   });
                 }
               } else if (
-                      table.rows &&
-                      Array.isArray(table.rows) &&
-                      table.rows.length > 0
+                table.rows &&
+                Array.isArray(table.rows) &&
+                table.rows.length > 0
               ) {
                 const task = table.rows[0];
                 parsedData.push({
                   "Task Title": task[0],
                   "Task Description": task[1],
-                  "Due Date": task[3],
+                  "Due Date": task[3] || "",
+                  "Email Type": data["Email Type"] || "", // Include Email Type property
+                  "Email URL": data["Email URL"] || "", // Include Email URL property
                   Priority: task[4],
-                  Suggestions: task[5],
-                  completed: false
+                  Suggestions: task[5]["Suggestions"],
+                  completed: false,
                 });
               }
             }
           }
         }
 
-        // console.log(parsedData);
         return parsedData;
       }
 
@@ -132,15 +136,16 @@
             }
           });
 
-        interface1.append('button')
-                .attr('class', 'bottom-button')
-                .text('Update')
-                .on('click', () => {
-                  retrieveDataFromCloudFunction().then((res) => {
-                    data = parseData(res);
-                    renderTasks();
-                  });
-                });
+        interface1
+          .append("button")
+          .attr("class", "bottom-button")
+          .text("Update")
+          .on("click", () => {
+            retrieveDataFromCloudFunction().then((res) => {
+              data = parseData(res);
+              renderTasks();
+            });
+          });
       }
 
       function renderTaskDetail() {
@@ -216,7 +221,6 @@
       }
 
       renderTasks();
-
     </script>
   </body>
 </html>
