@@ -1,1 +1,1 @@
-# mail-buddy
+# Mail Buddy
