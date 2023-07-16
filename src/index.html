@@ -68,6 +68,16 @@
                 default: return 'black';
               }
             });
+
+    interface1.append('button')
+            .attr('class', 'update-button')
+            .text('Check For Updates')
+            .on('click', () => {
+              retrieveDataFromCloudFunction();
+
+              // Function to execute on click
+              console.log('checking for updates..');
+            });
   }
 
   function renderTaskDetail() {
@@ -144,17 +154,17 @@
   renderTasks();
 
   function retrieveDataFromCloudFunction() {
-  fetch("https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData")
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error("Error retrieving data:", error);
-      // Handle the error appropriately
-    });
-}
-
+    console.log("here")
+    fetch("https://us-central1-mail-buddy-c568f.cloudfunctions.net/retrieveAllData")
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => {
+        console.error("Error retrieving data:", error);
+        // Handle the error appropriately
+      });
+  }
 
 </script>
 </body>
