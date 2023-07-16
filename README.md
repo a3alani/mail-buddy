@@ -1,5 +1,38 @@
 # Mail Buddy
 
+This was built during the SDxAI Hackathon
+
+WebApp link: https://a3alani.github.io/mail-buddy/src/
+
+DevPost link: https://devpost.com/software/getsh-tdonebuddy
+
+## Idea
+
+An application to help you manage your emails
+
+## Problem
+
+Many people get hundreds to thousands of emails a week and it is hard to manage. 
+
+Sometimes you forget it, sometimes you completely miss it.
+
+## Solution
+
+Mail Buddy, just log in with your Google account and our technology will access your Gmail and create a task list for you on Mail Buddy
+
+The task list has a lot of features, allowing you to manage all info related to the email in one place
+
+## Tech Stack
+
+JavaScript
+HTML
+CSS
+Firebase
+Stack.ai
+Zapier
+
+## Demo
+
 <img width="1440" alt="Screenshot 2023-07-16 at 2 14 05 PM" src="https://github.com/a3alani/mail-buddy/assets/103146838/8fd2f1bb-45d8-4860-bcc7-42b46f8e5b78">
 
 <img width="1440" alt="Screenshot 2023-07-16 at 2 14 27 PM" src="https://github.com/a3alani/mail-buddy/assets/103146838/fbe95a58-3971-4a46-badf-ffae3cc0e312">
