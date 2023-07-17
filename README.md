@@ -16,7 +16,7 @@ DevPost link: https://devpost.com/software/getsh-tdonebuddy
 
 ## Idea
 
-An application to help you manage your emails
+An application to help you manage your emails and replace your Gmail interface
 
 ## Problem
 
