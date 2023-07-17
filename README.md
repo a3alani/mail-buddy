@@ -1,5 +1,7 @@
 # Mail Buddy
 
+Note) Mail Buddy WebApp is currently not functional after the competition due to funding plan. Will be back soon when development is complete...
+
 This was built during the SDxAI Hackathon
 
 Mail Buddy link: https://a3alani.github.io/mail-buddy/src/
