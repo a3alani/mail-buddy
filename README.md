@@ -1,6 +1,6 @@
 # Mail Buddy
 
-Note) Mail Buddy WebApp is currently not functional after the competition due to funding plan. Will be back soon when development is complete...
+Note) Mail Buddy WebApp is currently not functional after the competition due to funding plan. Will be back soon when development is complete... For now feel free to check the demo below for an idea of what the app looked like when operarional 
 
 This was built during the SDxAI Hackathon
 
