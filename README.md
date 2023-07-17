@@ -4,7 +4,7 @@ Note)
 
 - Mail Buddy WebApp is currently not functional after the competition due to the funding plan. 
 
-- Will be back soon when development is complete... 
+- Will be back soon when the continued development is complete... 
 
 - For now feel free to check the demo below for an idea of what the app looked like when operarional and checkout this video demo https://youtube.com/watch?v=UWn3lZJy38k&feature=shareb
 
