@@ -1,18 +1,12 @@
 # Mail Buddy
 
-Note) 
-
-- Mail Buddy WebApp is currently not functional after the competition due to the funding plan. 
-
-- Will be back soon when the continued development is complete... 
-
-- For now feel free to check the demo below for an idea of what the app looked like when operarional and checkout this video demo https://youtube.com/watch?v=UWn3lZJy38k&feature=shareb
-
 This was built during the SDxAI Hackathon
 
 Mail Buddy link: https://a3alani.github.io/mail-buddy/src/
 
 DevPost link: https://devpost.com/software/getsh-tdonebuddy
+
+Video demo https://youtube.com/watch?v=UWn3lZJy38k&feature=shareb
 
 ## Idea
 
